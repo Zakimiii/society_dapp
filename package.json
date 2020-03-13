@@ -6,12 +6,12 @@
   "author": "Zakimiii <Th27876314@icloud.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "node ./src/bin/www",
     "server": "babel-node ./src/bin/www",
     "dev": "NODE_ENV=development npm-run-all server",
     "clean": "rimraf dist",
     "build": "babel ./src --out-dir dist",
-    "prod": "NODE_ENV=production npm-run-all clean build server:prod",
+    "production": "NODE_ENV=production npm-run-all clean build server:prod",
     "watch": "nodemon"
   },
   "devDependencies": {
@@ -27,6 +27,15 @@
     "morgan": "^1.9.1",
     "nodemon": "^2.0.2",
     "rimraf": "^3.0.0",
-    "yarn-run-all": "^3.1.1"
+    "yarn-run-all": "^3.1.1",
+    "bignumber.js": "^7.2.1",
+    "openzeppelin-solidity": "1.10.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "truffle": "^4.1.13",
+    "web3": "^1.0.0-beta.34",
+    "truffle-hdwallet-provider": "^1.0.8",
+    "web3-utils": "^1.0.0-beta.52",
+    "fs": "^0.0.1-security"
   }
 }
