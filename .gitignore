@@ -1,7 +1,6 @@
 .DS_Store
 .idea
 coverage
-node_modules
 docker
 *.log
 dist
@@ -28,3 +27,9 @@ jupyter
 
 docker-compose.yml
 docker-server-entrypoint.sh
+
+build
+.cache
+coverage
+coverage.json
+node_modules
