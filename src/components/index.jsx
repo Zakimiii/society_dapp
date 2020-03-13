@@ -3,8 +3,8 @@ import Web3 from "web3";
 import { render } from "react-dom";
 import { BigNumber } from "bignumber.js";
 
-const SimpleToken = require("../../build/contracts/SocietyToken.json");
-const GenericCrowdsale = require("../../build/contracts/SocietyToken.json");
+const SocietyToken = require("../../build/contracts/SocietyToken.json");
+const SocietyCrowdsale = require("../../build/contracts/SocietyCrowdsale.json");
 
 const CROWDSALE = "0x68d8ad07e01145aaa81102de1e9f3623c6bc50c3";
 const defaultAccount = "0xe2B539410e2FF2dE4403Cc379CFc794Af2D5C74f";
@@ -27,18 +27,8 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    // const provider = new HDWalletProvider(
-    //   "spend fatal draft cousin prize broccoli method habit divorce brand help quit",
-    //   `https://ropsten.infura.io/v3/01299627d9ec4feda61d26c74955af4c`
-    // );
-
-    // const provider = new Web3.providers.HttpProvider(
-    //   'https://ropsten.infura.io/v3/01299627d9ec4feda61d26c74955af4c'
-    // )
-
-    this.web3 = new Web3(Web3.givenProvider);
-    this.web3 = new Web3(provider);
-    this.Crowdsale = new this.web3.eth.Contract(GenericCrowdsale.abi, CROWDSALE);
+    this.web3 = new Web3('http://127.0.0.1:8545');
+    this.Crowdsale = new this.web3.eth.Contract(SocietyCrowdsale.abi, CROWDSALE);
 
     this.Crowdsale.methods.rate().call().then((rate) => {
       this.setState({ rate });
@@ -47,7 +37,7 @@ class App extends React.Component {
     })
 
     this.Crowdsale.methods.token().call().then((token) => {
-      this.Token = new this.web3.eth.Contract(SimpleToken.abi, token);
+      this.Token = new this.web3.eth.Contract(SocietyToken.abi, token);
 
       this.Token.methods.symbol().call().then((symbol) => {
         this.setState({ symbol });

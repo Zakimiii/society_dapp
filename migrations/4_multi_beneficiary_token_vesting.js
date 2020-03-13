@@ -124,7 +124,7 @@ async function displaySummary() {
     ==========================================================================================
        Deployed Contracts:
        SocietyToken: ${SocietyToken.address}
-       SocietyCrowdsal: ${SocietyCrowdsale.address}
+       SocietyCrowdsale: ${SocietyCrowdsale.address}
        MultiBeneficiaryTokenVesting: ${MultiBeneficiaryTokenVesting.address}
        Balances:
        MultiBeneficiaryTokenVesting (${MultiBeneficiaryTokenVesting.address}) => ${await tokenInstance.balanceOf(MultiBeneficiaryTokenVesting.address)} tokens

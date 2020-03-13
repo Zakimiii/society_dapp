@@ -24,4 +24,4 @@ yarn run production         # serve frontend application as prodcution
 
 Class diagram based on contracts you can find in the [openzeppelin-solidity/contracts/token/](https://github.com/OpenZeppelin/openzeppelin-solidity/tree/master/contracts/token). I hope the diagram makes it easier for you to understand relationships between different contracts and interfaces.
 
-![Tokens](./OpenZeppelinTokens.png)
+![Tokens](.public/OpenZeppelinTokens.png)
