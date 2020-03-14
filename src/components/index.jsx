@@ -6,20 +6,23 @@ import { BigNumber } from "bignumber.js";
 const SocietyToken = require("../../build/contracts/SocietyToken.json");
 const SocietyCrowdsale = require("../../build/contracts/SocietyCrowdsale.json");
 
-const CROWDSALE = "0x68d8ad07e01145aaa81102de1e9f3623c6bc50c3";
-const defaultAccount = "0xe2B539410e2FF2dE4403Cc379CFc794Af2D5C74f";
+const CROWDSALE = "0xf075a38c41a57936a2560b2191020b38ce976191";
+const eth_decimals = 10 ** 18;
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
+
     this.state = {
       symbol: null,
       rate: 0,
       balance: null,
+      eth_balance: null,
       decimals: null,
       left: null,
       amount: 1000,
+      closed: false,
     };
 
     this.changeAmount = this.changeAmount.bind(this);
@@ -32,9 +35,7 @@ class App extends React.Component {
 
     this.Crowdsale.methods.rate().call().then((rate) => {
       this.setState({ rate });
-    }).catch(e => {
-      console.log(e);
-    })
+    });
 
     this.Crowdsale.methods.token().call().then((token) => {
       this.Token = new this.web3.eth.Contract(SocietyToken.abi, token);
@@ -51,8 +52,12 @@ class App extends React.Component {
       });
 
       this.web3.eth.getAccounts()
-        .then(([account]) => this.Token.methods.balanceOf(account || defaultAccount).call())
+        .then(([account]) => this.Token.methods.balanceOf(account).call())
         .then(balance => this.setState({ balance: new BigNumber(balance) }));
+
+      this.web3.eth.getAccounts()
+        .then(([account]) => this.web3.eth.getBalance(account))
+        .then(balance => this.setState({ eth_balance: new BigNumber(balance) }));
     });
   }
 
@@ -67,19 +72,27 @@ class App extends React.Component {
 
   buy(ev) {
     ev.preventDefault();
-    const { decimals } = this.state;
-    const value = this.getPrice() * decimals;
-
-    this.web3.eth.getAccounts()
-      .then(([from]) => this.Crowdsale.methods.buyTokens(from || defaultAccount).send({ value, from: from || defaultAccount }));
+    const { decimals, rate } = this.state;
+    const value = this.web3.utils.toWei(this.getPrice().toString());
+    this.web3.eth.getAccounts().then(
+      ([from]) => this.Crowdsale.methods.buyTokens(
+        from,
+      ).send({
+        value,
+        from,
+      })
+    )
   }
 
   render() {
-    let { symbol, balance, amount, decimals, left } = this.state;
+    let { symbol, balance, eth_balance, amount, decimals, left } = this.state;
 
-    // if (!balance || !left) return null;
     if (!balance) {
       balance = new BigNumber(0);
+    }
+
+    if (!eth_balance) {
+      eth_balance = new BigNumber(0);
     }
 
     if (!left) {
@@ -91,11 +104,12 @@ class App extends React.Component {
         <h1 className="display-4">Buy {symbol}, awesome ERC20 token!</h1>
         <p className="lead">See the source to learn how to setup crowdsale landing page</p>
         <hr className="my-4" />
-        <p>You own: {balance.div(decimals).toString()} {symbol}</p>
-        <p>{left.div(decimals).toString()} {symbol} is left for sale</p>
+        <p>You own {symbol}: {balance.div(decimals).toString(10)} {symbol}</p>
+        <p>You own eth: {eth_balance.div(eth_decimals).toString(10)} ETH</p>
+        <p>{left/*.div(decimals)*/.toString(10)} {symbol} is left for sale</p>
         <form onSubmit={this.buy}>
           <div className="input-group mb-3">
-            <input type="number" className="form-control" placeholder={`How many ${symbol}s you need?`} onChange={this.changeAmount} value={amount} min="1" required />
+            <input type="number" className="form-control" placeholder={`How many ${symbol}s you need?`} onChange={this.changeAmount} value={amount}  required />
             <div className="input-group-append">
               <button className="btn btn-outline-secondary" disabled={!left} type="submit">
                 Pay {this.getPrice()} ETH

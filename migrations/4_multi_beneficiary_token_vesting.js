@@ -5,22 +5,13 @@ const config = JSON.parse(fs.readFileSync('../config/config.json', 'utf8'));
 const now = Math.floor(Date.now() / 1000);
 const day = 24 * 60 * 60;
 
-const beneficiaries = [
-  {
-    address: "0xC4DEBC682A2056c7c4BF02465A167b5E125e9592",
-    shares: 15,
-  },
-  {
-    address: "0x96b020d7D25B785F078875953FCc2a420FbF6fe9",
-    shares: 20,
-  },
-];
+const beneficiaries = config.beneficiaries;
 
 const tokenSettings = {
-  name: "Tooploox",
-  symbol: "TPX",
-  decimals: 18,
-  amount: 3000000,
+  name: config.token.name,
+  symbol: config.token.symbol,
+  decimals: config.token.decimals,
+  amount: config.token.amount
 };
 
 const vestingSettings = {
@@ -32,7 +23,7 @@ const vestingSettings = {
 const crowdsaleSettings = {
   openingTime: now + day,
   closingTime: now + 2 * day,
-  rate: 100,
+  rate: config.ICO.rate,
 };
 
 const SocietyCrowdsale = artifacts.require("./Crowdsale/SocietyCrowdsale.sol");

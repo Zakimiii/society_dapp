@@ -1,8 +1,5 @@
 {
   "preSaleToken": {
-    "name": "SocietyToken",
-    "symbol": "STK",
-    "decimals": 18,
     "amount": 3000000
   },
   "token": {
@@ -12,7 +9,7 @@
     "amount": 21000000
   },
   "ICO": {
-    "rate": 1000,
+    "rate": 100,
     "transferAmount": 20000000
   },
   "preICO": {
@@ -22,13 +19,5 @@
   "vesting": {
   },
   "beneficiaries": [
-    {
-      "address": "0xC4DEBC682A2056c7c4BF02465A167b5E125e9592",
-      "shares": 15
-    },
-    {
-      "address": "0x96b020d7D25B785F078875953FCc2a420FbF6fe9",
-      "shares": 20
-    }
   ]
 }
