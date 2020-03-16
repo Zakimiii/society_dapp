@@ -15,7 +15,7 @@ const tokenSettings = {
 };
 
 const vestingSettings = {
-  start: now + day,
+  start: now /*+ day*/,
   cliff: 365 * day,
   duration: 3 * 365 * day,
 };
@@ -36,8 +36,9 @@ module.exports = (deployer, network, [owner]) => deployer
   .then(() => transferTokensToVestingContract(owner))
   .then(() => addBeneficiariesToVestingContract(owner))
   .then(() => deployCrowdsale(deployer, owner))
+  .then(() => transferCrowdsale(deployer, owner))
   .then(() => transferRemainingTokensToCrowdsale(owner))
-  .then(() => displaySummary());
+  .then(() => displaySummary(owner));
 
 function deployToken(deployer) {
   return deployer.deploy(
@@ -67,6 +68,16 @@ function deployCrowdsale(deployer, owner) {
     crowdsaleSettings.rate,
     owner,
     SocietyToken.address,
+  );
+}
+
+async function transferCrowdsale(deployer, owner) {
+  const tokenInstance = (await SocietyToken.deployed());
+  console.log("Transfering tokens...");
+  return tokenInstance.transfer(
+    SocietyCrowdsale.address,
+    config.ICO.transferAmount * (10 ** config.token.decimals),
+    { from: owner }
   );
 }
 
@@ -108,7 +119,7 @@ function calculateRemainingTokensPercentage() {
   return beneficiaries.reduce((remaning, beneficiary) => remaning - beneficiary.shares, 100);
 }
 
-async function displaySummary() {
+async function displaySummary(owner) {
   const vestingInstance = (await MultiBeneficiaryTokenVesting.deployed());
   const tokenInstance = (await SocietyToken.deployed());
   console.log(`
@@ -118,6 +129,7 @@ async function displaySummary() {
        SocietyCrowdsale: ${SocietyCrowdsale.address}
        MultiBeneficiaryTokenVesting: ${MultiBeneficiaryTokenVesting.address}
        Balances:
+       Owner (${owner}) => ${await tokenInstance.balanceOf(owner)} tokens
        MultiBeneficiaryTokenVesting (${MultiBeneficiaryTokenVesting.address}) => ${await tokenInstance.balanceOf(MultiBeneficiaryTokenVesting.address)} tokens
        Crowdsale (${SocietyCrowdsale.address}) => ${await tokenInstance.balanceOf(SocietyCrowdsale.address)} tokens
        Beneficiaries: ${

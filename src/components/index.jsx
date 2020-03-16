@@ -6,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 const SocietyToken = require("../../build/contracts/SocietyToken.json");
 const SocietyCrowdsale = require("../../build/contracts/SocietyCrowdsale.json");
 
-const CROWDSALE = "0xf075a38c41a57936a2560b2191020b38ce976191";
+const CROWDSALE = "0x22506f090767417b4cd906a10e94e2fd2dc7c3ce";
 const eth_decimals = 10 ** 18;
 
 class App extends React.Component {
@@ -75,7 +75,7 @@ class App extends React.Component {
     const { decimals, rate } = this.state;
     const value = this.web3.utils.toWei(this.getPrice().toString());
     this.web3.eth.getAccounts().then(
-      ([from]) => this.Crowdsale.methods.buyTokens(
+      ([from, p]) => this.Crowdsale.methods.buyTokens(
         from,
       ).send({
         value,
@@ -106,7 +106,7 @@ class App extends React.Component {
         <hr className="my-4" />
         <p>You own {symbol}: {balance.div(decimals).toString(10)} {symbol}</p>
         <p>You own eth: {eth_balance.div(eth_decimals).toString(10)} ETH</p>
-        <p>{left/*.div(decimals)*/.toString(10)} {symbol} is left for sale</p>
+        <p>{left.div(decimals).toString(10)} {symbol} is left for sale</p>
         <form onSubmit={this.buy}>
           <div className="input-group mb-3">
             <input type="number" className="form-control" placeholder={`How many ${symbol}s you need?`} onChange={this.changeAmount} value={amount}  required />
