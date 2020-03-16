@@ -17,4 +17,9 @@ contract SocietyCrowdsale is TimedCrowdsale {
     TimedCrowdsale(_openingTime, _closingTime)
     public
   {}
+
+  function hasOpened() public view returns (bool) {
+    // solium-disable-next-line security/no-block-members
+    return block.timestamp >= openingTime;
+  }
 }

@@ -5,26 +5,17 @@ const config = JSON.parse(fs.readFileSync('../config/config.json', 'utf8'));
 const now = Math.floor(Date.now() / 1000);
 const day = 24 * 60 * 60;
 
-const beneficiaries = [
-  {
-    address: "0xC4DEBC682A2056c7c4BF02465A167b5E125e9592",
-    shares: 15,
-  },
-  {
-    address: "0x96b020d7D25B785F078875953FCc2a420FbF6fe9",
-    shares: 20,
-  },
-];
+const beneficiaries = config.beneficiaries;
 
 const tokenSettings = {
-  name: "Tooploox",
-  symbol: "TPX",
-  decimals: 18,
-  amount: 3000000,
+  name: config.token.name,
+  symbol: config.token.symbol,
+  decimals: config.token.decimals,
+  amount: config.token.amount
 };
 
 const vestingSettings = {
-  start: now + day,
+  start: now /*+ day*/,
   cliff: 365 * day,
   duration: 3 * 365 * day,
 };
@@ -32,7 +23,7 @@ const vestingSettings = {
 const crowdsaleSettings = {
   openingTime: now + day,
   closingTime: now + 2 * day,
-  rate: 100,
+  rate: config.ICO.rate,
 };
 
 const SocietyCrowdsale = artifacts.require("./Crowdsale/SocietyCrowdsale.sol");
@@ -45,8 +36,9 @@ module.exports = (deployer, network, [owner]) => deployer
   .then(() => transferTokensToVestingContract(owner))
   .then(() => addBeneficiariesToVestingContract(owner))
   .then(() => deployCrowdsale(deployer, owner))
+  .then(() => transferCrowdsale(deployer, owner))
   .then(() => transferRemainingTokensToCrowdsale(owner))
-  .then(() => displaySummary());
+  .then(() => displaySummary(owner));
 
 function deployToken(deployer) {
   return deployer.deploy(
@@ -76,6 +68,16 @@ function deployCrowdsale(deployer, owner) {
     crowdsaleSettings.rate,
     owner,
     SocietyToken.address,
+  );
+}
+
+async function transferCrowdsale(deployer, owner) {
+  const tokenInstance = (await SocietyToken.deployed());
+  console.log("Transfering tokens...");
+  return tokenInstance.transfer(
+    SocietyCrowdsale.address,
+    config.ICO.transferAmount * (10 ** config.token.decimals),
+    { from: owner }
   );
 }
 
@@ -117,7 +119,7 @@ function calculateRemainingTokensPercentage() {
   return beneficiaries.reduce((remaning, beneficiary) => remaning - beneficiary.shares, 100);
 }
 
-async function displaySummary() {
+async function displaySummary(owner) {
   const vestingInstance = (await MultiBeneficiaryTokenVesting.deployed());
   const tokenInstance = (await SocietyToken.deployed());
   console.log(`
@@ -127,6 +129,7 @@ async function displaySummary() {
        SocietyCrowdsale: ${SocietyCrowdsale.address}
        MultiBeneficiaryTokenVesting: ${MultiBeneficiaryTokenVesting.address}
        Balances:
+       Owner (${owner}) => ${await tokenInstance.balanceOf(owner)} tokens
        MultiBeneficiaryTokenVesting (${MultiBeneficiaryTokenVesting.address}) => ${await tokenInstance.balanceOf(MultiBeneficiaryTokenVesting.address)} tokens
        Crowdsale (${SocietyCrowdsale.address}) => ${await tokenInstance.balanceOf(SocietyCrowdsale.address)} tokens
        Beneficiaries: ${

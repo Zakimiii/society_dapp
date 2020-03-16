@@ -2,9 +2,10 @@ pragma solidity ^0.4.23;
 
 import "openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
+// import "openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
+// import "openzeppelin-solidity/contracts/token/ERC20/BurnableToken.sol";
 
-
-contract SocietyToken is DetailedERC20, StandardToken {
+contract SocietyToken is DetailedERC20, StandardToken/*, MintableToken, BurnableToken*/ {
   constructor(
     string _name,
     string _symbol,

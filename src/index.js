@@ -3,7 +3,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const {
-    transactionMiddleware,
     icoMiddleware,
 } = require('./apis');
 
@@ -14,12 +13,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 
 const routeBinding = (app) => {
-    // app.get('/', (req, res) => res.send('Hello'));
-    // app.get('/*', function(req, res) {
-    //   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-    // });
+    app.get('/welcome', (req, res) => res.send('Hello World'));
     app.use('/static', express.static('public'));
-    transactionMiddleware(app);
     icoMiddleware(app);
 }
 

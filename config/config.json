@@ -1,8 +1,5 @@
 {
   "preSaleToken": {
-    "name": "SocietyToken",
-    "symbol": "STK",
-    "decimals": 18,
     "amount": 3000000
   },
   "token": {
@@ -12,7 +9,7 @@
     "amount": 21000000
   },
   "ICO": {
-    "rate": 1000,
+    "rate": 100,
     "transferAmount": 20000000
   },
   "preICO": {
